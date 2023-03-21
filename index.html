@@ -3,61 +3,88 @@
   <head>
     <title>Crypto Ticker</title>
     <style>
-      html * {
+      * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
       }
-      .ticker {
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        font-size: 20px;
-        padding: 5px;
-        width: 100%;
-        height: 60px;
-        overflow: hidden;
-        margin: 0 auto;
-        position: relative;
+      @-webkit-keyframes ticker {
+        0% {
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+          visibility: visible;
+        }
+        100% {
+          -webkit-transform: translate3d(-100%, 0, 0);
+          transform: translate3d(-100%, 0, 0);
+        }
+      }
+      @keyframes ticker {
+        0% {
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+          visibility: visible;
+        }
+        100% {
+          -webkit-transform: translate3d(-100%, 0, 0);
+          transform: translate3d(-100%, 0, 0);
+        }
       }
       .ticker-wrap {
-        display: flex;
-        align-items: center;
-        gap: 18px;
+        width: 100%;
+        overflow: hidden;
         height: 60px;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding-left: 100%;
+        box-sizing: content-box;
       }
-      .ticker-item {
-        height: 60px;
-        width: fit-content;
-        word-wrap: none;
-        padding-right: 20px;
-        position: relative;
-        animation: ticker-slide 30s linear infinite;
+      .ticker-wrap .ticker {
+        display: inline-block;
+        height: 4rem;
+        white-space: nowrap;
+        padding-right: 100%;
+        box-sizing: content-box;
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+        -webkit-animation-timing-function: linear;
+        animation-timing-function: linear;
+        -webkit-animation-name: ticker;
+        animation-name: ticker;
+        -webkit-animation-duration: 200s;
+        animation-duration: 200s;
+      }
+      .ticker-wrap .ticker__item {
+        display: inline-block;
+        padding: 0 2rem;
+        color: white;
+      }
+      .ticker__container {
         display: flex;
+        height: 60px;
         align-items: center;
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
-          sans-serif;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+          'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
       }
-      .ticker-item p {
-        font-size: small;
+      .coin__details {
+        margin-left: 10px;
+        display: flex;
+        flex-direction: column;
       }
-      .ticker-item img {
+      .coin__name {
+        font-weight: bold;
+      }
+      .ticker__item img {
         height: 40px;
         width: 40px;
-        vertical-align: middle;
-        padding-right: 10px;
       }
-      @keyframes ticker-slide {
-        from {
-          left: 100%;
-        }
-        to {
-          left: -100%;
-        }
+      body {
+        padding-bottom: 5rem;
       }
     </style>
   </head>
   <body>
-    <div class="ticker">
-      <div class="ticker-wrap">
+    <div class="ticker-wrap">
+      <div class="ticker">
         <script>
           async function getCoinData() {
             let coinData = []
@@ -69,12 +96,12 @@
               })
               .then((data) => {
                 coinData = data
-                const tickerElement = document.querySelector('.ticker-wrap')
+                const tickerElement = document.querySelector('.ticker')
                 tickerElement.innerHTML = null
                 coinData.forEach((coin) => {
                   const coinElement = document.createElement('div')
-                  coinElement.innerHTML = `<img src=${coin.image} /><div><span>${coin.name}</span><p>$${coin.current_price}</p></div>`
-                  coinElement.className = 'ticker-item'
+                  coinElement.innerHTML = `<div class='ticker__container'><img src=${coin.image} /><div class='coin__details'><span class='coin__name'>${coin.name}</span><p>$${coin.current_price}</p></div></div>`
+                  coinElement.className = 'ticker__item'
                   tickerElement.appendChild(coinElement)
                 })
               })
@@ -83,6 +110,9 @@
               })
           }
           getCoinData()
+          setInterval(() => {
+            getCoinData()
+          }, 50000)
         </script>
       </div>
     </div>
