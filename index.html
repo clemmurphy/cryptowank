@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Crypto Ticker</title>
+    <style>
+      html * {
+        margin: 0;
+        padding: 0;
+      }
+      .ticker {
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 20px;
+        padding: 5px;
+        width: 100%;
+        height: 60px;
+        overflow: hidden;
+        margin: 0 auto;
+        position: relative;
+      }
+      .ticker-wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        height: 60px;
+      }
+      .ticker-item {
+        height: 60px;
+        width: fit-content;
+        word-wrap: none;
+        padding-right: 20px;
+        position: relative;
+        animation: ticker-slide 30s linear infinite;
+        display: flex;
+        align-items: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
+          sans-serif;
+      }
+      .ticker-item p {
+        font-size: small;
+      }
+      .ticker-item img {
+        height: 40px;
+        width: 40px;
+        vertical-align: middle;
+        padding-right: 10px;
+      }
+      @keyframes ticker-slide {
+        from {
+          left: 100%;
+        }
+        to {
+          left: -100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ticker">
+      <div class="ticker-wrap">
+        <script>
+          async function getCoinData() {
+            let coinData = []
+            fetch(
+              'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false'
+            )
+              .then((resp) => {
+                return resp.json()
+              })
+              .then((data) => {
+                coinData = data
+                const tickerElement = document.querySelector('.ticker-wrap')
+                tickerElement.innerHTML = null
+                coinData.forEach((coin) => {
+                  const coinElement = document.createElement('div')
+                  coinElement.innerHTML = `<img src=${coin.image} /><div><span>${coin.name}</span><p>$${coin.current_price}</p></div>`
+                  coinElement.className = 'ticker-item'
+                  tickerElement.appendChild(coinElement)
+                })
+              })
+              .catch((err) => {
+                console.log(err)
+              })
+          }
+          getCoinData()
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
